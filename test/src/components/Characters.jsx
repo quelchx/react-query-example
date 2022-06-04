@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { Card, Row, Button, Col, Typography, Alert } from "antd";
+import { Row, Button, Col, Typography, Alert } from "antd";
 
 import Spinner from "./Spinner";
 import Character from "./Character";
@@ -16,18 +16,25 @@ const Characters = () => {
     return response.json();
   };
 
-  const { status, data, error } = useQuery(
+  const { status, data, error, isFetching } = useQuery(
     ["characters", page],
-    fetchCharacters
+    fetchCharacters,
+    { cacheTime: 1000 * 60 * 60 }
   );
 
+  // console.log(isFetching);
+
   const paginate = (handler) => {
-    if (handler === "back") {
-      setPage((p) => p - 1);
-    } else {
-      setPage((p) => p + 1);
+    switch (handler) {
+      case "back":
+        return setPage((p) => p - 1);
+      case "forward":
+        return setPage((p) => p + 1);
+      default:
+        return;
     }
   };
+
   const { Title, Paragraph } = Typography;
 
   if (status === "loading") return <Spinner />;
@@ -37,7 +44,7 @@ const Characters = () => {
     <>
       <Typography
         style={{
-          padding: 20,
+          padding: 16,
         }}
       >
         <Title>Rick and Morty Characters</Title>
@@ -46,10 +53,13 @@ const Characters = () => {
         </Paragraph>
         <div style={{ display: "flex", gap: 8 }}>
           <Button onClick={() => paginate("back")} disabled={page === 1}>
-            {page - 1}
+            Back
           </Button>
+          <div style={{ padding: "4px 8px" }}>
+            {page} / {data.info.pages}
+          </div>
           <Button onClick={() => paginate("forward")} type="primary">
-            {page}
+            Forward
           </Button>
         </div>
       </Typography>
@@ -58,7 +68,7 @@ const Characters = () => {
           {data.results.map((character, idx) => {
             const { id, image, name, status } = character;
             return (
-              <Col key={id} xs={6} sm={6} md={8} lg={12} xl={12}>
+              <Col key={id} xs={12} sm={12} md={8} lg={6} xl={6}>
                 <Character name={name} id={id} status={status} image={image} />
               </Col>
             );
@@ -69,4 +79,4 @@ const Characters = () => {
   );
 };
 
-export default React.memo(Characters);
+export default Characters;
