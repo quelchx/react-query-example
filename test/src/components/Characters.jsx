@@ -16,10 +16,17 @@ const Characters = () => {
     return response.json();
   };
 
+  const hour = 1000 * 60 * 60;
   const { status, data, error, isFetching } = useQuery(
     ["characters", page],
     fetchCharacters,
-    { cacheTime: 1000 * 60 * 60 }
+    // this is good for data that isn't changing often (this is useful when we navigate away from this component and it would trigger the fetch again)
+    {
+      cacheTime: hour / 2,
+      staleTime: hour / 4,
+      refetchOnMount: false,
+      // refetchOnWindowFocus: true,
+    }
   );
 
   // console.log(isFetching);
