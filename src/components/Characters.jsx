@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useQuery } from "react-query";
 import { Row, Button, Col, Typography, Alert } from "antd";
 
@@ -31,16 +31,19 @@ const Characters = () => {
 
   // console.log(isFetching);
 
-  const paginate = (handler) => {
-    switch (handler) {
-      case "back":
-        return setPage((p) => p - 1);
-      case "forward":
-        return setPage((p) => p + 1);
-      default:
-        return;
-    }
-  };
+  const paginate = useCallback(
+    (handler) => {
+      switch (handler) {
+        case "back":
+          return setPage((p) => p - 1);
+        case "forward":
+          return setPage((p) => p + 1);
+        default:
+          return;
+      }
+    },
+    [setPage]
+  );
 
   const { Title, Paragraph } = Typography;
 
